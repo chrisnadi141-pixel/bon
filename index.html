@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jadwal Sholat Jakarta</title>
+
+<link rel="stylesheet" href="style.css" />
+
+<style>
+body{
+  margin:0;
+  padding:10px;
+  background:url("madina.jpg") no-repeat center center fixed;
+  background-size:cover;
+  color:white;
+  font-family:Arial,sans-serif;
+  text-shadow:1px 2px 4px rgba(0,0,0,.7);
+  text-align:center;
+}
+
+header{margin-bottom:20px}
+
+#tanggal{
+  font-size:18px;
+  margin:6px 0;
+}
+
+#countdown-container{
+  margin-top:8px;
+}
+
+#next-sholat{
+  font-size:20px;
+  font-weight:bold;
+}
+
+#countdown{
+  font-size:32px;
+  color:#ff4040;
+  font-weight:bold;
+}
+
+#jadwal-container{
+  margin-top:20px;
+}
+
+.sholat{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 14px;
+  margin:6px 0;
+  background:rgba(0,0,0,.45);
+  border-radius:8px;
+  font-size:18px;
+}
+footer{
+  margin-top:20px;
+  font-size:13px;
+}
+</style>
+</head>
+
+
+<body>
+
+<header>
+  <h1>Jadwal Sholat</h1>
+  <div id="tanggal"></div>
+
+  <div id="countdown-container">
+    <div id="next-sholat">Menuju --</div>
+    <div id="countdown">00 : 00 : 00</div>
+  </div>
+</header>
+ <div class="running-text">
+    <div class="running-inner">
+      🌙 Selamat Ramadhan 🌙
+    </div> </div>
+<main>
+  <div id="jadwal-container">
+   
+    <div class="sholat" id="Imsak"><span class="nama">Imsak</span><span class="waktu"></span></div>
+    <div class="sholat" id="Fajr"><span class="nama">Subuh</span><span class="waktu"></span></div>
+    <div class="sholat" id="Dhuhr"><span class="nama">Dzuhur</span><span class="waktu"></span></div>
+    <div class="sholat" id="Asr"><span class="nama">Ashar</span><span class="waktu"></span></div>
+    <div class="sholat" id="Maghrib"><span class="nama">Maghrib</span><span class="waktu"></span></div>
+    <div class="sholat" id="Isha"><span class="nama">Isya</span><span class="waktu"></span></div>
+  </div>
+</main>
+
+<footer>
+© Jadwal Sholat - (DKI Jakarta)
+</footer>
+
+
+
+<!-- ================= SCRIPT INLINE ================= -->
+<script>
+
+const KODE_KOTA = "1301"; // DKI Jakarta
+let jadwalHari = null;
+
+
+// ================= TANGGAL =================
+function tampilTanggal(){
+  const d = new Date();
+  const opt = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
+  document.getElementById("tanggal").innerHTML =
+    d.toLocaleDateString("id-ID", opt);
+}
+
+
+// ================= FETCH API =================
+async function ambilJadwal(){
+
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth()+1).padStart(2,"0");
+  const d = String(now.getDate()).padStart(2,"0");
+
+  const url = `https://api.myquran.com/v2/sholat/jadwal/${KODE_KOTA}/${y}/${m}/${d}`;
+
+  const res = await fetch(url);
+  const json = await res.json();
+
+  jadwalHari = json.data.jadwal;
+
+  isiHTML();
+}
+
+
+// ================= TAMPILKAN KE HTML =================
+function isiHTML(){
+
+  const map = {
+    Imsak: jadwalHari.imsak,
+    Fajr: jadwalHari.subuh,
+    Dhuhr: jadwalHari.dzuhur,
+    Asr: jadwalHari.ashar,
+    Maghrib: jadwalHari.maghrib,
+    Isha: jadwalHari.isya
+  };
+
+  Object.keys(map).forEach(id=>{
+    document.querySelector(`#${id} .waktu`).textContent = map[id];
+  });
+}
+
+
+// ================= COUNTDOWN =================
+function mulaiCountdown(){
+
+  setInterval(()=>{
+
+    if(!jadwalHari) return;
+
+    const now = new Date();
+
+    const list = [
+      ["Subuh", jadwalHari.subuh],
+      ["Dzuhur", jadwalHari.dzuhur],
+      ["Ashar", jadwalHari.ashar],
+      ["Maghrib", jadwalHari.maghrib],
+      ["Isya", jadwalHari.isya]
+    ];
+
+    let next = null;
+
+    for(const item of list){
+      const [nama,waktu] = item;
+
+      const [h,m] = waktu.split(":");
+      const t = new Date();
+      t.setHours(h,m,0,0);
+
+      if(t > now){
+        next = {nama, t};
+        break;
+      }
+    }
+
+    // kalau sudah lewat semua → subuh besok
+    if(!next){
+      const [h,m] = jadwalHari.subuh.split(":");
+      const t = new Date();
+      t.setDate(t.getDate()+1);
+      t.setHours(h,m,0,0);
+      next = {nama:"Subuh", t};
+    }
+
+    const diff = next.t - now;
+
+    const h = Math.floor(diff/3600000);
+    const m = Math.floor(diff/60000)%60;
+    const s = Math.floor(diff/1000)%60;
+
+    document.getElementById("next-sholat").innerHTML =
+      `Menuju ${next.nama}`;
+
+    document.getElementById("countdown").innerHTML =
+      `${String(h).padStart(2,'0')} : ${String(m).padStart(2,'0')} : ${String(s).padStart(2,'0')}`;
+
+  },1000);
+}
+
+
+// ================= INIT =================
+tampilTanggal();
+ambilJadwal();
+mulaiCountdown();
+
+</script>
+
+</body>
+</html>
