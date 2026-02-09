@@ -1,0 +1,120 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ================= HEADER ================= */
+header{
+  text-align:center;
+  padding:25px 10px;
+  background:rgba(0,0,0,.35);
+}
+
+header h1{
+  font-size:32px;
+  margin-bottom:8px;
+}
+
+#tanggal{
+  font-size:18px;
+  opacity:.9;
+  margin-bottom:18px;
+}
+
+/* ================= COUNTDOWN ================= */
+#countdown-container{
+  background:rgba(255,255,255,.08);
+  padding:15px;
+  border-radius:14px;
+  display:inline-block;
+}
+
+#next-sholat{
+  font-size:20px;
+  margin-bottom:5px;
+}
+
+#countdown{
+  font-size:38px;
+  font-weight:bold;
+  color:#ffd54f;
+  letter-spacing:2px;
+}
+
+
+/* ================= JADWAL ================= */
+main{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+#jadwal-container{
+  display:grid;
+  grid-template-columns:1fr 1fr; /* 2 kolom */
+  gap:8px;
+  margin-top:18px;
+}
+
+.sholat{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 12px;
+  background:rgba(0,0,0,.45);
+  border-radius:10px;
+  font-size:15px;
+}
+
+.sholat:hover{
+  transform:scale(1.05);
+  background:rgba(255,255,255,.2);
+}
+/* nama sholat merah */
+.sholat .nama{
+  color:#ff4040;
+  font-weight:bold;
+}
+
+/* waktu tetap putih */
+.sholat .waktu{
+  color:#ffffff;
+  font-size:14px;
+  font-weight:bold;
+}
+
+ /* ================= MOBILE ================= */
+@media(max-width:600px){
+  #jadwal-container{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  #countdown{
+    font-size:30px;
+  }
+}
+
+/* HARI BESAR */
+#hariBesarBox{ grid-column: 1 / -1;
+}
+  background:rgba(0,0,0,.55);
+  padding:10px 14px;
+  border-radius:10px;
+  margin-bottom:8px;
+  font-size:15px;
+  font-weight:600;
+  text-align:center;
+  color:#ffd966;
+}
