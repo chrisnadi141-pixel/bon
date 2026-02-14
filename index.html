@@ -247,6 +247,16 @@ function mulaiCountdown(){
 tampilTanggal();
 ambilJadwal();
 mulaiCountdown();
+/* SLIDESHOW BACKGROUND */
+const slides=["madina.jpg","madinah1.jpg"];
+let indexSlide=0;
+
+function gantiBackground(){
+  document.body.style.backgroundImage=`url('${slides[indexSlide]}')`;
+  indexSlide=(indexSlide+1)%slides.length;
+}
+gantiBackground();
+setInterval(gantiBackground,15000);
 
 </script>
 
